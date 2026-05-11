@@ -1,13 +1,13 @@
 # Daily Market Pulse
 
-An automated n8n workflow that runs every weekday at 6am PST, pulls the latest stock market news from 9 sources, filters and deduplicates it, then uses Google Gemini AI to generate a pre-market briefing delivered straight to Discord — built specifically for options traders.
+An automated n8n workflow that runs every weekday at 6am PST, pulls the latest stock market news from 8 sources, filters and deduplicates it, then uses Google Gemini AI to generate a pre-market briefing delivered straight to Discord — built specifically for options traders.
 
 ## How It Works
 
 ```
 Scheduled Trigger (6am PST, Mon–Fri)
         ↓
-9 RSS Feeds pulled in parallel
+8 RSS Feeds pulled in parallel
         ↓
 Chained Merge Nodes (combines all feeds)
         ↓
@@ -31,7 +31,6 @@ Discord Webhook → Market Pulse Bot
 | Motley Fool | Stock picks & investing strategy |
 | CNBC | Breaking financial news |
 | MarketWatch | Market data & commentary |
-| Reuters | Business & world news |
 | Forbes | Business & economy |
 | Benzinga | Options-focused market news |
 | Nasdaq | Nasdaq original content |
