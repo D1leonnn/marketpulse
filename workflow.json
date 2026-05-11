@@ -1,306 +1,262 @@
-  {
-    "name": "Daily Market Pulse",
-    "nodes": [
-      {
-        "parameters": {
-          "rule": {
-            "interval": [{"field": "cronExpression", "expression": "0 13 * * 1-5"}]
-          }
-        },
-        "id": "node-0",
-        "name": "Weekdays at 6am PST",
-        "type": "n8n-nodes-base.scheduleTrigger",
-        "typeVersion": 1.1,
-        "position": [0, 500]
+{
+  "name": "Daily Market Pulse",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "cronExpression", "expression": "0 13 * * 1-5"}]
+        }
       },
-      {
-        "parameters": {"url": "https://finance.yahoo.com/news/rssindex"},
-        "id": "node-1",
-        "name": "Yahoo Finance",
-        "type": "n8n-nodes-base.rssFeedRead",
-        "typeVersion": 1,
-        "position": [240, 60]
-      },
-      {
-        "parameters": {"url": "https://www.investing.com/rss/news.rss"},
-        "id": "node-2",
-        "name": "Investing.com",
-        "type": "n8n-nodes-base.rssFeedRead",
-        "typeVersion": 1,
-        "position": [240, 160]
-      },
-      {
-        "parameters": {"url": "https://www.fool.com/feeds/index.aspx"},
-        "id": "node-3",
-        "name": "Motley Fool",
-        "type": "n8n-nodes-base.rssFeedRead",
-        "typeVersion": 1,
-        "position": [240, 260]
-      },
-      {
-        "parameters": {"url": "https://www.cnbc.com/id/100003114/device/rss/rss.html"},
-        "id": "node-4",
-        "name": "CNBC",
-        "type": "n8n-nodes-base.rssFeedRead",
-        "typeVersion": 1,
-        "position": [240, 360]
-      },
-      {
-        "parameters": {"url": "https://feeds.marketwatch.com/marketwatch/topstories/"},
-        "id": "node-5",
-        "name": "MarketWatch",
-        "type": "n8n-nodes-base.rssFeedRead",
-        "typeVersion": 1,
-        "position": [240, 460]
-      },
-      {
-        "parameters": {"url": "https://feeds.reuters.com/reuters/businessNews"},
-        "id": "node-6",
-        "name": "Reuters",
-        "type": "n8n-nodes-base.rssFeedRead",
-        "typeVersion": 1,
-        "position": [240, 560]
-      },
-      {
-        "parameters": {"url": "https://www.forbes.com/business/feed/"},
-        "id": "node-7",
-        "name": "Forbes",
-        "type": "n8n-nodes-base.rssFeedRead",
-        "typeVersion": 1,
-        "position": [240, 660]
-      },
-      {
-        "parameters": {"url": "https://www.benzinga.com/feed"},
-        "id": "node-8",
-        "name": "Benzinga",
-        "type": "n8n-nodes-base.rssFeedRead",
-        "typeVersion": 1,
-        "position": [240, 760]
-      },
-      {
-        "parameters": {"url": "https://www.nasdaq.com/feed/nasdaq-original/rss.xml"},
-        "id": "node-9",
-        "name": "Nasdaq",
-        "type": "n8n-nodes-base.rssFeedRead",
-        "typeVersion": 1,
-        "position": [240, 860]
-      },
-      {
-        "parameters": {"mode": "append"},
-        "id": "node-10",
-        "name": "Merge 1",
-        "type": "n8n-nodes-base.merge",
-        "typeVersion": 2.1,
-        "position": [500, 110]
-      },
-      {
-        "parameters": {"mode": "append"},
-        "id": "node-11",
-        "name": "Merge 2",
-        "type": "n8n-nodes-base.merge",
-        "typeVersion": 2.1,
-        "position": [700, 185]
-      },
-      {
-        "parameters": {"mode": "append"},
-        "id": "node-12",
-        "name": "Merge 3",
-        "type": "n8n-nodes-base.merge",
-        "typeVersion": 2.1,
-        "position": [900, 260]
-      },
-      {
-        "parameters": {"mode": "append"},
-        "id": "node-13",
-        "name": "Merge 4",
-        "type": "n8n-nodes-base.merge",
-        "typeVersion": 2.1,
-        "position": [1100, 335]
-      },
-      {
-        "parameters": {"mode": "append"},
-        "id": "node-14",
-        "name": "Merge 5",
-        "type": "n8n-nodes-base.merge",
-        "typeVersion": 2.1,
-        "position": [1300, 410]
-      },
-      {
-        "parameters": {"mode": "append"},
-        "id": "node-15",
-        "name": "Merge 6",
-        "type": "n8n-nodes-base.merge",
-        "typeVersion": 2.1,
-        "position": [1500, 485]
-      },
-      {
-        "parameters": {"mode": "append"},
-        "id": "node-16",
-        "name": "Merge 7",
-        "type": "n8n-nodes-base.merge",
-        "typeVersion": 2.1,
-        "position": [1700, 560]
-      },
-      {
-        "parameters": {"mode": "append"},
-        "id": "node-17",
-        "name": "Merge 8",
-        "type": "n8n-nodes-base.merge",
-        "typeVersion": 2.1,
-        "position": [1900, 635]
-      },
-      {
-        "parameters": {"mode": "append"},
-        "id": "node-18",
-        "name": "Merge 9",
-        "type": "n8n-nodes-base.merge",
-        "typeVersion": 2.1,
-        "position": [2100, 710]
-      },
-      {
-        "parameters": {
-          "jsCode": "const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);\nconst seen = new Set();\nconst results
-  = [];\n\nfor (const item of $input.all()) {\n  const pub = new Date(item.json.isoDate || item.json.pubDate || 0);\n
-  if (pub < cutoff) continue;\n\n  const key = (item.json.title || '').toLowerCase().trim().substring(0, 60);\n  if
-  (seen.has(key)) continue;\n  seen.add(key);\n\n  results.push(item);\n}\n\nreturn results.length > 0 ? results :
-  $input.all();"
-        },
-        "id": "node-19",
-        "name": "Filter & Deduplicate",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [2300, 710]
-      },
-      {
-        "parameters": {
-          "sortFieldsUi": {
-            "sortField": [{"fieldName": "isoDate", "order": "descending"}]
-          },
-          "options": {}
-        },
-        "id": "node-20",
-        "name": "Sort by Date",
-        "type": "n8n-nodes-base.sort",
-        "typeVersion": 1,
-        "position": [2500, 710]
-      },
-      {
-        "parameters": {"maxItems": 20},
-        "id": "node-21",
-        "name": "Top 20",
-        "type": "n8n-nodes-base.limit",
-        "typeVersion": 1,
-        "position": [2700, 710]
-      },
-      {
-        "parameters": {
-          "jsCode": "const articles = $input.all().map((item, i) => {\n  const title = item.json.title || 'Untitled';\n
-   const link = item.json.link || '';\n  const raw = item.json.contentSnippet || item.json.content || item.json.summary
-  || '';\n  const snippet = raw.replace(/<[^>]*>/g, '').trim().substring(0, 200);\n  return `${i+1}. ${title}\\n   URL:
-  ${link}${snippet ? '\\n   ' + snippet + '...' : ''}`;\n}).join('\\n\\n');\n\nreturn [{ json: { articlesText: articles
-  } }];"
-        },
-        "id": "node-22",
-        "name": "Format for AI",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [2900, 710]
-      },
-      {
-        "parameters": {
-          "promptType": "define",
-          "text": "=You are an expert financial analyst and options trading strategist. Here are today's latest market
-  news articles:\n\n{{ $json.articlesText }}\n\nCreate a pre-market Discord briefing for an options trader. Use this
-  exact format:\n\n**Market Sentiment:** (bullish/bearish/neutral and why in 1 sentence)\n\n**Top Catalysts
-  Today:**\n(list 2-3 key events: earnings, Fed, economic data, geopolitical)\n\n**Sectors to Watch:**\n(which sectors
-  are moving and why)\n\n**Stocks in Play:**\n(2-3 stocks with news that could cause big price movement - ideal for
-  options)\n\n**Risk Factors:**\n(1-2 things that could cause unexpected volatility)\n\n*Not financial advice. Do your
-  own research.*\n\nUse Discord markdown. Keep under 1800 characters total."
-        },
-        "id": "node-23",
-        "name": "AI Summarize",
-        "type": "@n8n/n8n-nodes-langchain.chainLlm",
-        "typeVersion": 1.4,
-        "position": [3100, 710]
-      },
-      {
-        "parameters": {
-          "model": "gemini-2.0-flash",
-          "options": {}
-        },
-        "id": "node-24",
-        "name": "Google Gemini",
-        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
-        "typeVersion": 1,
-        "position": [3100, 930]
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://discordapp.com/api/webhooks/1503208494952612061/zPqbyCiAsJtvOYrFz56uDQGpju7ydNydmYp7UQHuYfbDx_
-  M8nYDnrnlUuz-kMOdet6Z6",
-          "sendBody": true,
-          "contentType": "json",
-          "bodyParameters": {
-            "parameters": [
-              {
-                "name": "content",
-                "value": "={{ '📈 **Market Pulse — ' + $now.format('MMMM D, YYYY') + '**\\n\\n' + ($json.text ||
-  $json.response || $json.output || 'No summary generated').substring(0, 1900) }}"
-              },
-              {
-                "name": "username",
-                "value": "Market Pulse Bot"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "id": "node-25",
-        "name": "Post to Discord",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.1,
-        "position": [3300, 710]
-      }
-    ],
-    "connections": {
-      "Weekdays at 6am PST": {
-        "main": [[
-          {"node": "Yahoo Finance", "type": "main", "index": 0},
-          {"node": "Investing.com", "type": "main", "index": 0},
-          {"node": "Motley Fool",   "type": "main", "index": 0},
-          {"node": "CNBC",          "type": "main", "index": 0},
-          {"node": "MarketWatch",   "type": "main", "index": 0},
-          {"node": "Reuters",       "type": "main", "index": 0},
-          {"node": "Forbes",        "type": "main", "index": 0},
-          {"node": "Benzinga",      "type": "main", "index": 0},
-          {"node": "Nasdaq",        "type": "main", "index": 0}
-        ]]
-      },
-      "Yahoo Finance": {"main": [[{"node": "Merge 1", "type": "main", "index": 0}]]},
-      "Investing.com": {"main": [[{"node": "Merge 1", "type": "main", "index": 1}]]},
-      "Merge 1":       {"main": [[{"node": "Merge 2", "type": "main", "index": 0}]]},
-      "Motley Fool":   {"main": [[{"node": "Merge 2", "type": "main", "index": 1}]]},
-      "Merge 2":       {"main": [[{"node": "Merge 3", "type": "main", "index": 0}]]},
-      "CNBC":          {"main": [[{"node": "Merge 3", "type": "main", "index": 1}]]},
-      "Merge 3":       {"main": [[{"node": "Merge 4", "type": "main", "index": 0}]]},
-      "MarketWatch":   {"main": [[{"node": "Merge 4", "type": "main", "index": 1}]]},
-      "Merge 4":       {"main": [[{"node": "Merge 5", "type": "main", "index": 0}]]},
-      "Reuters":       {"main": [[{"node": "Merge 5", "type": "main", "index": 1}]]},
-      "Merge 5":       {"main": [[{"node": "Merge 6", "type": "main", "index": 0}]]},
-      "Forbes":        {"main": [[{"node": "Merge 6", "type": "main", "index": 1}]]},
-      "Merge 6":       {"main": [[{"node": "Merge 7", "type": "main", "index": 0}]]},
-      "Benzinga":      {"main": [[{"node": "Merge 7", "type": "main", "index": 1}]]},
-      "Merge 7":       {"main": [[{"node": "Merge 8", "type": "main", "index": 0}]]},
-      "Nasdaq":        {"main": [[{"node": "Merge 8", "type": "main", "index": 1}]]},
-      "Merge 8":       {"main": [[{"node": "Merge 9", "type": "main", "index": 0}]]},
-      "Merge 9":       {"main": [[{"node": "Filter & Deduplicate", "type": "main", "index": 0}]]},
-      "Filter & Deduplicate": {"main": [[{"node": "Sort by Date", "type": "main", "index": 0}]]},
-      "Sort by Date":  {"main": [[{"node": "Top 20", "type": "main", "index": 0}]]},
-      "Top 20":        {"main": [[{"node": "Format for AI", "type": "main", "index": 0}]]},
-      "Format for AI": {"main": [[{"node": "AI Summarize", "type": "main", "index": 0}]]},
-      "AI Summarize":  {"main": [[{"node": "Post to Discord", "type": "main", "index": 0}]]},
-      "Google Gemini": {"ai_languageModel": [[{"node": "AI Summarize", "type": "ai_languageModel", "index": 0}]]}
+      "id": "node-0",
+      "name": "Weekdays at 6am PST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 500]
     },
-    "settings": {"executionOrder": "v1"}
-  }
+    {
+      "parameters": {"url": "https://finance.yahoo.com/news/rssindex"},
+      "id": "node-1",
+      "name": "Yahoo Finance",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [240, 100]
+    },
+    {
+      "parameters": {"url": "https://www.investing.com/rss/news.rss"},
+      "id": "node-2",
+      "name": "Investing.com",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [240, 210]
+    },
+    {
+      "parameters": {"url": "https://www.fool.com/feeds/index.aspx"},
+      "id": "node-3",
+      "name": "Motley Fool",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [240, 320]
+    },
+    {
+      "parameters": {"url": "https://www.cnbc.com/id/100003114/device/rss/rss.html"},
+      "id": "node-4",
+      "name": "CNBC",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [240, 430]
+    },
+    {
+      "parameters": {"url": "https://feeds.marketwatch.com/marketwatch/topstories/"},
+      "id": "node-5",
+      "name": "MarketWatch",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [240, 540]
+    },
+    {
+      "parameters": {"url": "https://www.forbes.com/business/feed/"},
+      "id": "node-6",
+      "name": "Forbes",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [240, 650]
+    },
+    {
+      "parameters": {"url": "https://www.benzinga.com/feed"},
+      "id": "node-7",
+      "name": "Benzinga",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [240, 760]
+    },
+    {
+      "parameters": {"url": "https://www.nasdaq.com/feed/nasdaq-original/rss.xml"},
+      "id": "node-8",
+      "name": "Nasdaq",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [240, 870]
+    },
+    {
+      "parameters": {"mode": "append"},
+      "id": "node-9",
+      "name": "Merge 1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [500, 155]
+    },
+    {
+      "parameters": {"mode": "append"},
+      "id": "node-10",
+      "name": "Merge 2",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [700, 265]
+    },
+    {
+      "parameters": {"mode": "append"},
+      "id": "node-11",
+      "name": "Merge 3",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [900, 375]
+    },
+    {
+      "parameters": {"mode": "append"},
+      "id": "node-12",
+      "name": "Merge 4",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [1100, 485]
+    },
+    {
+      "parameters": {"mode": "append"},
+      "id": "node-13",
+      "name": "Merge 5",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [1300, 595]
+    },
+    {
+      "parameters": {"mode": "append"},
+      "id": "node-14",
+      "name": "Merge 6",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [1500, 705]
+    },
+    {
+      "parameters": {"mode": "append"},
+      "id": "node-15",
+      "name": "Merge 7",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [1700, 815]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);\nconst seen = new Set();\nconst results = [];\nfor (const item of $input.all()) {\n  const pub = new Date(item.json.isoDate || item.json.pubDate || 0);\n  if (pub < cutoff) continue;\n  const key = (item.json.title || '').toLowerCase().trim().substring(0, 60);\n  if (seen.has(key)) continue;\n  seen.add(key);\n  results.push(item);\n}\nreturn results.length > 0 ? results : $input.all();"
+      },
+      "id": "node-16",
+      "name": "Filter & Deduplicate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1900, 815]
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [{"fieldName": "isoDate", "order": "descending"}]
+        },
+        "options": {}
+      },
+      "id": "node-17",
+      "name": "Sort by Date",
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [2100, 815]
+    },
+    {
+      "parameters": {"maxItems": 20},
+      "id": "node-18",
+      "name": "Top 20",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [2300, 815]
+    },
+    {
+      "parameters": {
+        "jsCode": "const articles = $input.all().map((item, i) => {\n  const title = item.json.title || 'Untitled';\n  const link = item.json.link || '';\n  const raw = item.json.contentSnippet || item.json.content || item.json.summary || '';\n  const snippet = raw.replace(/<[^>]*>/g, '').trim().substring(0, 200);\n  return `${i+1}. ${title}\\n   URL: ${link}${snippet ? '\\n   ' + snippet + '...' : ''}`;\n}).join('\\n\\n');\nreturn [{ json: { articlesText: articles } }];"
+      },
+      "id": "node-19",
+      "name": "Format for AI",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2500, 815]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert financial analyst and options trading strategist. Here are today's latest market news articles:\n\n{{ $json.articlesText }}\n\nCreate a pre-market Discord briefing for an options trader. Use this exact format:\n\n**Market Sentiment:** (bullish/bearish/neutral and why in 1 sentence)\n\n**Top Catalysts Today:**\n(list 2-3 key events: earnings, Fed, economic data, geopolitical)\n\n**Sectors to Watch:**\n(which sectors are moving and why)\n\n**Stocks in Play:**\n(2-3 stocks with news that could cause big price movement - ideal for options)\n\n**Risk Factors:**\n(1-2 things that could cause unexpected volatility)\n\n*Not financial advice. Do your own research.*\n\nUse Discord markdown. Keep under 1800 characters total."
+      },
+      "id": "node-20",
+      "name": "AI Summarize",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [2700, 815]
+    },
+    {
+      "parameters": {
+        "model": "gemini-2.0-flash",
+        "options": {}
+      },
+      "id": "node-21",
+      "name": "Google Gemini",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [2700, 1000]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://discordapp.com/api/webhooks/1503208494952612061/zPqbyCiAsJtvOYrFz56uDQGpju7ydNydmYp7UQHuYfbDx_M8nYDnrnlUuz-kMOdet6Z6",
+        "sendBody": true,
+        "contentType": "json",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "content",
+              "value": "={{ '📈 **Market Pulse — ' + $now.format('MMMM D, YYYY') + '**\\n\\n' + ($json.text || $json.response || $json.output || 'No summary generated').substring(0, 1900) }}"
+            },
+            {
+              "name": "username",
+              "value": "Market Pulse Bot"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-22",
+      "name": "Post to Discord",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2900, 815]
+    }
+  ],
+  "connections": {
+    "Weekdays at 6am PST": {
+      "main": [[
+        {"node": "Yahoo Finance", "type": "main", "index": 0},
+        {"node": "Investing.com", "type": "main", "index": 0},
+        {"node": "Motley Fool",   "type": "main", "index": 0},
+        {"node": "CNBC",          "type": "main", "index": 0},
+        {"node": "MarketWatch",   "type": "main", "index": 0},
+        {"node": "Forbes",        "type": "main", "index": 0},
+        {"node": "Benzinga",      "type": "main", "index": 0},
+        {"node": "Nasdaq",        "type": "main", "index": 0}
+      ]]
+    },
+    "Yahoo Finance":        {"main": [[{"node": "Merge 1", "type": "main", "index": 0}]]},
+    "Investing.com":        {"main": [[{"node": "Merge 1", "type": "main", "index": 1}]]},
+    "Merge 1":              {"main": [[{"node": "Merge 2", "type": "main", "index": 0}]]},
+    "Motley Fool":          {"main": [[{"node": "Merge 2", "type": "main", "index": 1}]]},
+    "Merge 2":              {"main": [[{"node": "Merge 3", "type": "main", "index": 0}]]},
+    "CNBC":                 {"main": [[{"node": "Merge 3", "type": "main", "index": 1}]]},
+    "Merge 3":              {"main": [[{"node": "Merge 4", "type": "main", "index": 0}]]},
+    "MarketWatch":          {"main": [[{"node": "Merge 4", "type": "main", "index": 1}]]},
+    "Merge 4":              {"main": [[{"node": "Merge 5", "type": "main", "index": 0}]]},
+    "Forbes":               {"main": [[{"node": "Merge 5", "type": "main", "index": 1}]]},
+    "Merge 5":              {"main": [[{"node": "Merge 6", "type": "main", "index": 0}]]},
+    "Benzinga":             {"main": [[{"node": "Merge 6", "type": "main", "index": 1}]]},
+    "Merge 6":              {"main": [[{"node": "Merge 7", "type": "main", "index": 0}]]},
+    "Nasdaq":               {"main": [[{"node": "Merge 7", "type": "main", "index": 1}]]},
+    "Merge 7":              {"main": [[{"node": "Filter & Deduplicate", "type": "main", "index": 0}]]},
+    "Filter & Deduplicate": {"main": [[{"node": "Sort by Date", "type": "main", "index": 0}]]},
+    "Sort by Date":         {"main": [[{"node": "Top 20", "type": "main", "index": 0}]]},
+    "Top 20":               {"main": [[{"node": "Format for AI", "type": "main", "index": 0}]]},
+    "Format for AI":        {"main": [[{"node": "AI Summarize", "type": "main", "index": 0}]]},
+    "AI Summarize":         {"main": [[{"node": "Post to Discord", "type": "main", "index": 0}]]},
+    "Google Gemini":        {"ai_languageModel": [[{"node": "AI Summarize", "type": "ai_languageModel", "index": 0}]]}
+  },
+  "settings": {"executionOrder": "v1"}
+}
